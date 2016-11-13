@@ -13,3 +13,6 @@ Pour lancer et utiliser le projet en local :
 
 	- se placer dans le dossier "angular"
 	- faire la commande : php -S localhost:8000
+	
+	
+	- pour accéder à l'API : https://apis-explorer.appspot.com/apis-explorer/?base=https://quizzcelebrity-149400.appspot.com/_ah/api#p/
