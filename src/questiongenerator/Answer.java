@@ -4,12 +4,12 @@ public class Answer {
 	
 	private String name;
 	private String date;
-	private String birthplace;
+	private String country;
 	
-	public Answer(String q, String n, String d, String bp){
+	public Answer(String n, String d, String nat){
 		name = n;
 		date = d;
-		birthplace = bp;
+		country = nat;
 	}
 
 
@@ -25,10 +25,10 @@ public class Answer {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public String getBirthplace() {
-		return birthplace;
+	public String getCountry() {
+		return country;
 	}
-	public void setBirthplace(String birthplace) {
-		this.birthplace = birthplace;
+	public void setCountry(String country) {
+		this.country = country;
 	}
 }

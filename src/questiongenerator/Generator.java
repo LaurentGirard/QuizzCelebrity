@@ -1,5 +1,7 @@
 package questiongenerator;
 
+import java.util.ArrayList;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
@@ -15,7 +17,9 @@ public class Generator {
 	
 	Question type_question;
 	@Persistent
-	String answers;
+	ArrayList<Answer> good_answers = new ArrayList<Answer>();
+	ArrayList<Answer> bad_answers = new ArrayList<Answer>();
+
 	
 	public Generator(String t_question){
 		switch (t_question) {
@@ -31,22 +35,22 @@ public class Generator {
 			type_question = new ActorQuestion();
 			break;
 		}
-	}	
-	
-	public String getAnswers(){
-		return answers;
 	}
-	
-	public void setAnswers(String ans){
-		answers = ans;
-	}
-	
-	public Question getType_Question(){
+
+	public Question getType_question() {
 		return type_question;
 	}
-	
-	public void setQuestion(Question t_question){
-		type_question = t_question;
+
+	public void setType_question(Question type_question) {
+		this.type_question = type_question;
 	}
+
+	public ArrayList<Answer> getAnswers() {
+		return good_answers;
+	}
+
+	public void setAnswers(ArrayList<Answer> answers) {
+		this.good_answers = answers;
+	}	
 	
 }

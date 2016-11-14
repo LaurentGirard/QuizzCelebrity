@@ -8,13 +8,15 @@ import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.datanucleus.query.JDOCursorHelper;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
+import com.hp.hpl.jena.rdf.model.Literal;
 
 import api.PMF;
+import questiongenerator.Answer;
 import questiongenerator.Generator;
 
-import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -177,17 +179,30 @@ public class QuizzCelebrityEndpoint {
 	 */
 	@ApiMethod(name = "generatorQuestion")
 	public Generator generatorQuestion(@Named("type_question") String type_question) {
-		Generator generator = new Generator(type_question);
+	
+		Answer current_answer;
+		Literal name, date, country;
 		
-		QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", generator.getType_Question().getRequest());
+		Generator generator = new Generator(type_question);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", generator.getType_question().getRequest());
 
 		ResultSet results = qexec.execSelect();
 
-		// write to a ByteArrayOutputStream
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ArrayList<Answer> answers = new ArrayList<Answer>();
+		
+		while (results.hasNext())
+		{
+			QuerySolution binding = results.nextSolution();
 
-		ResultSetFormatter.outputAsJSON(outputStream, results);
-		generator.setAnswers(new String(outputStream.toByteArray()));
+			name = binding.getLiteral("n");
+			date = binding.getLiteral("date");
+			country = binding.getLiteral("cnt");
+			
+			current_answer = new Answer(name.toString(), date.toString(), country.toString());
+			answers.add(current_answer);
+		}
+		
+		generator.setAnswers(answers);
 		qexec.close() ;
 		
 		return generator;
