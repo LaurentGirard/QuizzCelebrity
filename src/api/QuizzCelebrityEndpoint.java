@@ -5,18 +5,18 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.datanucleus.query.JDOCursorHelper;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 import api.PMF;
-import questiongenerator.Answer;
-import questiongenerator.Generator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,7 +25,6 @@ import javax.inject.Named;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 
 @Api(name = "quizzcelebrityendpoint", namespace = @ApiNamespace(ownerDomain = "mycompany.com", ownerName = "mycompany.com", packagePath = "services"))
 public class QuizzCelebrityEndpoint {
@@ -49,7 +48,7 @@ public class QuizzCelebrityEndpoint {
 
 		try {
 			mgr = getPersistenceManager();
-			Query query = mgr.newQuery(ScoreEntity.class);
+			javax.jdo.Query query = mgr.newQuery(ScoreEntity.class);
 			if (cursorString != null && cursorString != "") {
 				cursor = Cursor.fromWebSafeString(cursorString);
 				HashMap<String, Object> extensionMap = new HashMap<String, Object>();
@@ -177,35 +176,20 @@ public class QuizzCelebrityEndpoint {
 	 *
 	 * @return The inserted entity.
 	 */
-	@ApiMethod(name = "generatorQuestion")
-	public Generator generatorQuestion(@Named("type_question") String type_question) {
+	@ApiMethod(name = "requeteDatastore")
+	public JsonResponse requeteDatastore(@Named("theme") String theme) {
 	
-		Answer current_answer;
-		Literal name, date, country;
+		JsonResponse response = new JsonResponse();
 		
-		Generator generator = new Generator(type_question);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", generator.getType_question().getRequest());
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		
+		Query q = new Query("Person").setFilter(new FilterPredicate("thème", FilterOperator.EQUAL, theme));
+		PreparedQuery pq = datastore.prepare(q);
 
-		ResultSet results = qexec.execSelect();
-
-		ArrayList<Answer> answers = new ArrayList<Answer>();
+		List<Entity> result = pq.asList(FetchOptions.Builder.withDefaults());
+		response.setResponseJSON(result);
 		
-		while (results.hasNext())
-		{
-			QuerySolution binding = results.nextSolution();
-
-			name = binding.getLiteral("n");
-			date = binding.getLiteral("date");
-			country = binding.getLiteral("cnt");
-			
-			current_answer = new Answer(name.toString(), date.toString(), country.toString());
-			answers.add(current_answer);
-		}
-		
-		generator.setAnswers(answers);
-		qexec.close() ;
-		
-		return generator;
+		return response;
 	}
 
 	private static PersistenceManager getPersistenceManager() {
