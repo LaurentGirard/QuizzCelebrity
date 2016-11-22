@@ -1,6 +1,6 @@
 var app = angular.module('celebrityQuizz', ['angular-google-gapi']);
 
-app.run(['GApi', 'GAuth',
+/*app.run(['GApi', 'GAuth',
   function(GApi, GAuth) {
       var BASE = 'https://quizzcelebrity-149400.appspot.com/_ah/api';
       GApi.load('quizzcelebrityendpoint','v1',BASE).then(function(resp) {
@@ -9,10 +9,10 @@ app.run(['GApi', 'GAuth',
           console.log('an error occured during loading api: ' + resp.api + ', resp.version: ' + version);
       });
   }
-]);
+]);*/
 
 
-/*app.run(['GAuth', 'GApi', 'GData', '$state', '$rootScope',
+app.run(['GAuth', 'GApi', 'GData', '$state', '$rootScope',
     function(GAuth, GApi, GData, $state, $rootScope) {
 
         $rootScope.gdata = GData;
@@ -50,7 +50,7 @@ app.run(['GApi', 'GAuth',
             }
         );
     }
-]);*/
+]);
 
 
 
