@@ -17,13 +17,18 @@ var jsonObj = {
 	parsed: null,
 };
 
-var nbQuestion;
+
 var resultat;
 var stateQ;
 
 
 app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 
+		
+		$scope.nbQuestion = 0 ;
+		$scope.etatQ = "Qui" ;
+		$scope.tabPersonnes;
+		$scope.tabReponses;
 		
 		/*Méthode pour récupérer la liste des entités*/
 		GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:"musician"}).then(function(resp) {
@@ -34,7 +39,6 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 	     jsonObj.notparsed = JSON.stringify(arr);	     
 	     jsonObj.parsed = JSON.parse(jsonObj.notparsed);
 	     
-	     $scope.nbQuestion = nbQuestion;
      
 	     runApp(jsonObj);		
 		
@@ -60,7 +64,7 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 	
 	function play() 
 	{
-		nbQuestion = 0;
+		
 		resultat =0;
 		nextQuestion();
 	}
@@ -84,13 +88,16 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 		console.log("index true = " + indexTrue);
 		
 				
-		$scope.tabReponses[indexTrue] = $scope.tabPersonnes[0].properties.Name;
+		$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Name;
 		console.log($scope.tabPersonnes);
-		$scope.etatQ = "Qui";
 		
 		fillTabReponses(indexTrue);
 		
 		console.log($scope.tabReponses);
+		$scope.currentQuestionImage = $scope.tabPersonnes[$scope.nbQuestion].properties.Image;
+		console.log($scope.currentQuestionImage);
+		
+		
 		
 
 	}
@@ -105,8 +112,10 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 	function fillTabReponses(indexTrue)
 	{
 	
-		switch($scope.etatQ) {
+		switch("Qui") {
     		case "Qui":
+    		
+    			$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Name;
         		for (var i = 0; i < 4 ; i++) {
     			
     			if ( i != indexTrue)
@@ -117,6 +126,8 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
        		
        		
    			 case "Quand":
+   			 
+   			 	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date
   	   	   		for (var i = 0; i < 4 ; i++) {
     			
     			if ( i != indexTrue)
@@ -125,8 +136,10 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
        		 break;
        		 
        		 
-       		 
+       		 	
        		  case "Où":
+       		  
+       		  	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Country;
   	   	   		for (var i = 0; i < 4 ; i++) {
     			
     			if ( i != indexTrue)
@@ -142,6 +155,8 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 	
 	
 	}
+	
+	function choose(
 	
 
 	
