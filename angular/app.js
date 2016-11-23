@@ -17,6 +17,11 @@ var jsonObj = {
 	parsed: null,
 };
 
+var nbQuestion;
+var resultat;
+var stateQ;
+
+
 app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 
 		
@@ -28,6 +33,8 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 	     
 	     jsonObj.notparsed = JSON.stringify(arr);	     
 	     jsonObj.parsed = JSON.parse(jsonObj.notparsed);
+	     
+	     $scope.nbQuestion = nbQuestion;
      
 	     runApp(jsonObj);		
 		
@@ -40,15 +47,103 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
         
         function runApp(json)
 	{
+		$scope.tabPersonnes = json.parsed;
+		$scope.tabReponses = [ null, null, null, null ];
+		 
+		prepareQuestion();
 		$scope.funiculaire = json.parsed[0].properties.Name;
-   	
 
 	}
 	
 	
 	
 	
+	function play() 
+	{
+		nbQuestion = 0;
+		resultat =0;
+		nextQuestion();
+	}
 	
+	
+	function nextQuestion()
+	{
+		if (nbQuestion = 10)
+			finDuJeu();
+		else
+			prepareQuestion();
+	}
+	
+	
+	function prepareQuestion()
+	{
+		var tab = [false , false, true, false];
+		tab = shuffle(tab);
+		console.log(tab);
+		var indexTrue = tab.findIndex(estTrue);
+		console.log("index true = " + indexTrue);
+		
+				
+		$scope.tabReponses[indexTrue] = $scope.tabPersonnes[0].properties.Name;
+		console.log($scope.tabPersonnes);
+		$scope.etatQ = "Qui";
+		
+		fillTabReponses(indexTrue);
+		
+		console.log($scope.tabReponses);
+		
+
+	}
+	
+	
+	function estTrue(element, index, array) {
+ 		return element;
+ 	}
+
+	
+	
+	function fillTabReponses(indexTrue)
+	{
+	
+		switch($scope.etatQ) {
+    		case "Qui":
+        		for (var i = 0; i < 4 ; i++) {
+    			
+    			if ( i != indexTrue)
+					$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Name;
+				}
+				
+       		break;
+       		
+       		
+   			 case "Quand":
+  	   	   		for (var i = 0; i < 4 ; i++) {
+    			
+    			if ( i != indexTrue)
+					$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Date;
+				}
+       		 break;
+       		 
+       		 
+       		 
+       		  case "Où":
+  	   	   		for (var i = 0; i < 4 ; i++) {
+    			
+    			if ( i != indexTrue)
+					$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Country;
+				}
+       		 break;
+       		 
+    		default: 
+    			console.log("Default du swith in fillTabResponses");
+		}
+	
+	
+	
+	
+	}
+	
+
 	
 	
 	
@@ -62,22 +157,22 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 	
 	
 	function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+ 	 var currentIndex = array.length, temporaryValue, randomIndex;
 
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
+  	// While there remain elements to shuffle...
+ 	 while (0 !== currentIndex) {
 
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
+  	  // Pick a remaining element...
+ 	   randomIndex = Math.floor(Math.random() * currentIndex);
+ 	   currentIndex -= 1;
 
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
+   	 // And swap it with the current element.
+   	 temporaryValue = array[currentIndex];
+   	 array[currentIndex] = array[randomIndex];
+  	  array[randomIndex] = temporaryValue;
+ 	 }
 
-  return array;
+  	return array;
 }
 
 
