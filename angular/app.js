@@ -1,5 +1,6 @@
 var app = angular.module('celebrityQuizz', ['angular-google-gapi']);
 
+
 app.run(['GApi', 'GAuth',
   function(GApi, GAuth) {
       var BASE = 'https://quizzcelebrity-149400.appspot.com/_ah/api';
@@ -11,76 +12,78 @@ app.run(['GApi', 'GAuth',
   }
 ]);
 
+var jsonObj = {
+	notparsed: null,
+	parsed: null,
+};
 
-/*app.run(['GAuth', 'GApi', 'GData', '$state', '$rootScope',
-    function(GAuth, GApi, GData, $state, $rootScope) {
+app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 
-        $rootScope.gdata = GData;
+		
+		/*Méthode pour récupérer la liste des entités*/
+		GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:"musician"}).then(function(resp) {
+	    
+	     var arr = resp.responseJSON;
+	     arr = shuffle(arr); //On mélange l'array	     
+	     
+	     jsonObj.notparsed = JSON.stringify(arr);	     
+	     jsonObj.parsed = JSON.parse(jsonObj.notparsed);
+     
+	     runApp(jsonObj);		
+		
 
-        var CLIENT = '770415131518-otnjoc83imqb99d1j95ssd0h9he599jb.apps.googleusercontent.com';
-        var BASE = 'https://quizzcelebrity-149400.appspot.com/_ah/api';
+        }, function() {
+            console.log('error :(');
+        });
+        
+        
+        
+        function runApp(json)
+	{
+		$scope.funiculaire = json.parsed[0].properties.Name;
+   	
 
-        GApi.load('quizzcelebrityendpoint','v1',BASE).then(function(resp) {
-          console.log('api: ' + resp.api + ', version: ' + resp.version + ' loaded');
-      }, function(resp) {
-          console.log('an error occured during loading api: ' + resp.api + ', resp.version: ' + version);
-      });
-        GApi.load('calendar','v3'); // for google api (https://developers.google.com/apis-explorer/)
-
-        GAuth.setClient(CLIENT)
-        // default scope is only https://www.googleapis.com/auth/userinfo.email
-        GAuth.setScope('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.readonly');
-
-        // load the auth api so that it doesn't have to be loaded asynchronously
-        // when the user clicks the 'login' button.
-        // That would lead to popup blockers blocking the auth window
-        GAuth.load();
-
-        // or just call checkAuth, which in turn does load the oauth api.
-        // if you do that, GAuth.load(); is unnecessary
-        GAuth.checkAuth().then(
-            function (user) {
-                console.log(user.name + ' is logged in');
-                $state.go('webapp.home'); // an example of action if it's possible to
-                                        // authenticate user at startup of the application
-            },
-            function() {
-                $state.go('login'); // an example of action if it's impossible to
-                                  // authenticate user at startup of the application
-            }
-        );
-    }
-]);*/
-
-
-
-
-
-
-
-
-
-
-
-
-/*app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
-
-
-	GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:"musician"}).then(function(resp) {
-	
-	
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
 
 
 
 
-
-GApi.execute('scoreentityendpoint','insertScoreEntity',{id: Math.floor(Math.random()*1000000)+1, name: $scope.name, score: $scope.current_score}).then(function(resp) {
-
-
-
-
-}]) ;*/
+}]) ;
 
 
 
@@ -136,7 +139,7 @@ var validation = {
   pas_ok: "Té nulachié...",
 };
 
-app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
+app.controller('AnswerController2', ['$scope1', 'GApi', function($scope, GApi){
   
   $scope.iterator = 0;
   $scope.poolQuestions = questions;
