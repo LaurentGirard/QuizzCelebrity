@@ -24,14 +24,20 @@ var stateQ;
 
 app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 
-		
+		$scope.theme = "actor";
 		$scope.nbQuestion = 0 ;
 		$scope.etatQ = "Qui" ;
 		$scope.tabPersonnes;
 		$scope.tabReponses;
+		$scope.page = "connexion";
 		
+		
+		
+		function loadQuestions() {
+	
+
 		/*Méthode pour récupérer la liste des entités*/
-		GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:"musician"}).then(function(resp) {
+		GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:$scope.theme}).then(function(resp) {
 	    
 	     var arr = resp.responseJSON;
 	     arr = shuffle(arr); //On mélange l'array	     
@@ -46,12 +52,16 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
         }, function() {
             console.log('error :(');
         });
-        
+       
+       }
         
         
         function runApp(json)
 	{
 		$scope.tabPersonnes = json.parsed;
+
+		$scope.currentQuestionImage = $scope.tabPersonnes[$scope.nbQuestion].properties.Image;
+		console.log("IMAGE = " + $scope.currentQuestionImage);
 		$scope.tabReponses = [ null, null, null, null ];
 		 
 		prepareQuestion();
@@ -75,6 +85,7 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 		if (nbQuestion = 10)
 			finDuJeu();
 		else
+			
 			prepareQuestion();
 	}
 	
@@ -156,8 +167,27 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 	
 	}
 	
-	function choose(
+	$scope.chooseActor = function()
+	{
+		$scope.theme = 'actor';
+		loadQuestions();
+		
+	}
 	
+	
+	$scope.chooseMusician = function()
+	{
+		$scope.theme = 'musician';
+		loadQuestions();
+		
+		
+	}
+	
+	$scope.openPagePlay = function()
+	{
+		$scope.page = "play";		
+		
+	}
 
 	
 	

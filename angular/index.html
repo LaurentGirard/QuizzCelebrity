@@ -19,10 +19,23 @@
 
   <body ng-controller="AnswerController">
   
-  	{{ funiculaire }}
- 
-  
-  
+
+	<div ng-show = "page == 'connexion' " >
+ 		<button name = "connexion" ng-click="connexionMethod()"> connexion </button>
+ 		<button name = "play" ng-click="openPagePlay()"> play </button>
+ 	</div>
+
+  	
+  	<div ng-show = "page == 'play' " >
+  		{{ funiculaire }}
+ 		<button name = "actor" ng-click="chooseActor()"> actor </button>
+ 		<button name = "musician" ng-click="chooseMusician()"> muscician </button>
+ 		<img ng-src="{{currentQuestionImage}}"  style="height: 500px;"/>  
+ 	</div>
+ 	
+ 	
+ 	
+ 	
   </body>
 
 
