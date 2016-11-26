@@ -11,5 +11,5 @@ Pour ajouter les librairies nécessaires depuis Eclipse :
 
 Pour lancer et utiliser le projet en local : 
 
-	- se placer dans le dossier "angular"
+	- se placer dans le dossier "webapp"
 	- faire la commande : php -S localhost:8000

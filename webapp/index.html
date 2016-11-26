@@ -11,28 +11,11 @@
 
 	<body ng-controller="QuizzController">
 	
-		<!-- NAVBAR à changer, juste pour en foutre une et commencer à organiser le style ^^ -->
-		<nav id = "navbar" class="header-wrapper">
-            <div class = "container">
-                <div class="row headerbar">
-                    <div class="col-lg-4">
-                        <!-- <a class = "logo-link" title="Makina Corpus" accesskey="1" href="{% pageurl site_root %}">
-                            <img class = "logo" alt="logo" src="">
-                            <img class = "slogan" alt="Développement de nouveaux horizons" src="http://makina-corpus.com/++theme++plonetheme.makinacorpuscom/images/slogan.png">
-                        </a> -->
-                    </div>
-					<div ng-show = "user">
-						<div class = "col-lg-offset-4 col-lg-1">
-							<p>{{ user.name }}</p>
-							<button name = "Logout" ng-click="logout()">Logout</button>
-						</div>
-						<div class = "col-lg-2">
-							<img ng-src = "{{ user.picture }}" style="width:80px;">
-						</div>
-                    </div>
-                </div>
-            </div>
-        </nav>	
+		<div ng-show = "user">
+			<p>{{ user.name }}</p>
+			<button name = "Logout" ng-click="logout()">Logout</button>
+			<img ng-src = "{{ user.picture }}" style="width:80px;">
+		</div>
 	
 		<div ng-show = "page == 'connexion' " >
 			<button name = "play" ng-click="openPagePlay()"> play </button>
