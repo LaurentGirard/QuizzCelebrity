@@ -1,5 +1,14 @@
-var app = angular.module('celebrityQuizz', ['angular-google-gapi']);
+var CLIENT = '770415131518-s2is18ruc36nuo8ukvb5tgk5vm6r95kp.apps.googleusercontent.com';
 
+var app = angular.module('celebrityQuizz', ['angular-google-gapi', 'ngCookies']);
+
+var jsonObj = {
+	notparsed: null,
+	parsed: null,
+};
+
+var resultat;
+var stateQ;
 
 app.run(['GApi', 'GAuth',
   function(GApi, GAuth) {
@@ -9,86 +18,93 @@ app.run(['GApi', 'GAuth',
       }, function(resp) {
           console.log('an error occured during loading api: ' + resp.api + ', resp.version: ' + version);
       });
+      
+      GAuth.setClient(CLIENT);    
+      GAuth.setScope('https://www.googleapis.com/auth/userinfo.profile');
+      GAuth.load();
   }
 ]);
 
-var jsonObj = {
-	notparsed: null,
-	parsed: null,
-};
+app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData', function($scope, GApi, GAuth, $cookies, GData){
 
-
-var resultat;
-var stateQ;
-
-
-app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
-
-		$scope.theme = "actor";
-		$scope.nbQuestion = 0 ;
-		$scope.etatQ = "Qui" ;
-		$scope.tabPersonnes;
-		$scope.tabReponses;
-		$scope.page = "connexion";
-		
-		
-		
-		function loadQuestions() {
+	$scope.theme = "actor";
+	$scope.nbQuestion = 0 ;
+	$scope.etatQ = "Qui" ;
+	$scope.tabPersonnes;
+	$scope.tabReponses;
+	$scope.page = "connexion";
+	$scope.user = null;
 	
+	if ($cookies.get("google_id")) {
+        GData.setUserId($cookies.get("google_id"));
 
-		/*Méthode pour récupérer la liste des entités*/
+        GAuth.checkAuth().then(
+            function(user) {
+                $scope.user = user;
+            },
+            function() {
+                console.log("Oups! Failure to connect...");
+            }
+        )
+    }
+	
+    $scope.login = function() {
+        GAuth.login().then(function(user) {
+            $scope.user = user;
+            $cookies.put("google_id", user.id);
+        }, function() {
+            console.log("Oups! Failure to connect...");
+        });
+    };
+    
+    // Fake logout (cannot change the user, his token isn't destroy yet -> to fix)
+    $scope.logout = function() {
+        GAuth.logout();
+        GData.setUserId(null);
+        $scope.user = null;
+        $cookies.remove("google_id");
+    };
+	
+	// Méthode pour récupérer la liste des entités
+	function loadQuestions() {
+
 		GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:$scope.theme}).then(function(resp) {
 	    
-	     var arr = resp.responseJSON;
-	     arr = shuffle(arr); //On mélange l'array	     
+		var arr = resp.responseJSON;
+		arr = shuffle(arr); //On mélange l'array	     
 	     
-	     jsonObj.notparsed = JSON.stringify(arr);	     
-	     jsonObj.parsed = JSON.parse(jsonObj.notparsed);
-	     
-     
-	     runApp(jsonObj);		
-		
-
-        }, function() {
-            console.log('error :(');
-        });
-       
-       }
+	    jsonObj.notparsed = JSON.stringify(arr);	     
+	    jsonObj.parsed = JSON.parse(jsonObj.notparsed);
+	 
+	    runApp(jsonObj);		
+	
+	    }, function() {
+	        console.log('error :(');
+	    });
+	}
         
-        
-        function runApp(json)
-	{
+	function runApp(json){
 		$scope.tabPersonnes = json.parsed;
-
+	
 		$scope.currentQuestionImage = $scope.tabPersonnes[$scope.nbQuestion].properties.Image;
 		console.log("IMAGE = " + $scope.currentQuestionImage);
 		$scope.tabReponses = [ null, null, null, null ];
 		 
 		prepareQuestion();
 		$scope.funiculaire = json.parsed[0].properties.Name;
-
 	}
 	
-	
-	
-	
-	function play() 
-	{
-		
+	function play() {
 		resultat =0;
 		nextQuestion();
 	}
 	
-	
-	function nextQuestion()
-	{
+	function nextQuestion(){
 		if (nbQuestion = 10)
 			finDuJeu();
 		else
-			
 			prepareQuestion();
 	}
-	
 	
 	function prepareQuestion()
 	{
@@ -97,7 +113,6 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 		console.log(tab);
 		var indexTrue = tab.findIndex(estTrue);
 		console.log("index true = " + indexTrue);
-		
 				
 		$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Name;
 		console.log($scope.tabPersonnes);
@@ -107,54 +122,42 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
 		console.log($scope.tabReponses);
 		$scope.currentQuestionImage = $scope.tabPersonnes[$scope.nbQuestion].properties.Image;
 		console.log($scope.currentQuestionImage);
-		
-		
-		
-
 	}
 	
 	
 	function estTrue(element, index, array) {
  		return element;
  	}
-
-	
 	
 	function fillTabReponses(indexTrue)
 	{
-	
 		switch("Qui") {
-    		case "Qui":
+    		
+			case "Qui":
     		
     			$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Name;
         		for (var i = 0; i < 4 ; i++) {
-    			
-    			if ( i != indexTrue)
-					$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Name;
+	    			if ( i != indexTrue)
+						$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Name;
 				}
 				
        		break;
-       		
        		
    			 case "Quand":
    			 
    			 	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date
   	   	   		for (var i = 0; i < 4 ; i++) {
-    			
-    			if ( i != indexTrue)
-					$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Date;
+	    			if (i != indexTrue)
+						$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Date;
 				}
-       		 break;
-       		 
-       		 
+       		 break;       		 
        		 	
-       		  case "Où":
+       		 case "Où":
        		  
        		  	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Country;
   	   	   		for (var i = 0; i < 4 ; i++) {
-    			
-    			if ( i != indexTrue)
-					$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Country;
+	    			if (i != indexTrue)
+						$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Country;
 				}
        		 break;
        		 
@@ -162,66 +165,42 @@ app.controller('AnswerController', ['$scope', 'GApi', function($scope, GApi){
     			console.log("Default du swith in fillTabResponses");
 		}
 	
-	
-	
-	
 	}
 	
-	$scope.chooseActor = function()
-	{
+	$scope.chooseActor = function(){
 		$scope.theme = 'actor';
-		loadQuestions();
-		
+		loadQuestions();	
 	}
 	
 	
-	$scope.chooseMusician = function()
-	{
+	$scope.chooseMusician = function(){
 		$scope.theme = 'musician';
-		loadQuestions();
-		
-		
+		loadQuestions();	
 	}
 	
-	$scope.openPagePlay = function()
-	{
-		$scope.page = "play";		
-		
+	$scope.openPagePlay = function(){
+		$scope.login();
+		$scope.page = "play";	
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	function shuffle(array) {
- 	 var currentIndex = array.length, temporaryValue, randomIndex;
-
-  	// While there remain elements to shuffle...
- 	 while (0 !== currentIndex) {
-
-  	  // Pick a remaining element...
- 	   randomIndex = Math.floor(Math.random() * currentIndex);
- 	   currentIndex -= 1;
-
-   	 // And swap it with the current element.
-   	 temporaryValue = array[currentIndex];
-   	 array[currentIndex] = array[randomIndex];
-  	  array[randomIndex] = temporaryValue;
- 	 }
-
-  	return array;
-}
-
-
-
+	 	var currentIndex = array.length, temporaryValue, randomIndex;
+	
+	  	// While there remain elements to shuffle...
+	 	while (0 !== currentIndex) {
+	
+			// Pick a remaining element...
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex -= 1;
+		
+		   	 // And swap it with the current element.
+		   	 temporaryValue = array[currentIndex];
+		   	 array[currentIndex] = array[randomIndex];
+		  	 array[randomIndex] = temporaryValue;
+	 	 }
+	
+	  	return array;
+	}
 
 }]) ;
 

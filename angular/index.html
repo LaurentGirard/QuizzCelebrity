@@ -1,43 +1,58 @@
 <!DOCTYPE html>
 <html ng-app="celebrityQuizz">
 
-  <head>
-    <meta charset="utf-8" />
-    <title>Quizz Célébrités</title>
-    <!-- BOOTSTRAP -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-	<!-- END BOOTSTRAP -->
-	<script type="text/javascript" src="https://code.angularjs.org/1.5.8/angular.js" data-require="angular.js@1.5.x" data-semver="1.5.8"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/maximepvrt/angular-google-gapi/master/dist/angular-google-gapi.min.js" ></script>
+	<head>
+	    <meta charset="utf-8" />
+	    <title>Celebrity Quizz</title>
+	    
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	
+	</head>
 
+	<body ng-controller="QuizzController">
+	
+		<!-- NAVBAR à changer, juste pour en foutre une et commencer à organiser le style ^^ -->
+		<nav id = "navbar" class="header-wrapper">
+            <div class = "container">
+                <div class="row headerbar">
+                    <div class="col-lg-4">
+                        <!-- <a class = "logo-link" title="Makina Corpus" accesskey="1" href="{% pageurl site_root %}">
+                            <img class = "logo" alt="logo" src="">
+                            <img class = "slogan" alt="Développement de nouveaux horizons" src="http://makina-corpus.com/++theme++plonetheme.makinacorpuscom/images/slogan.png">
+                        </a> -->
+                    </div>
+					<div ng-show = "user">
+						<div class = "col-lg-offset-4 col-lg-1">
+							<p>{{ user.name }}</p>
+							<button name = "Logout" ng-click="logout()">Logout</button>
+						</div>
+						<div class = "col-lg-2">
+							<img ng-src = "{{ user.picture }}" style="width:80px;">
+						</div>
+                    </div>
+                </div>
+            </div>
+        </nav>	
+	
+		<div ng-show = "page == 'connexion' " >
+			<button name = "play" ng-click="openPagePlay()"> play </button>
+		</div>
+		 	
+		<div ng-show = "page == 'play' " >
+	 		{{ funiculaire }}
+			<button name = "actor" ng-click="chooseActor()"> actor </button>
+			<button name = "musician" ng-click="chooseMusician()"> muscician </button>
+			<img ng-src="{{currentQuestionImage}}"  style="height: 300px;"/>  
+		</div>
+	</body>
+	
+	<script src= "js/angular.min.js"></script>
+	<script src= "js/angular-google-gapi.min.js"></script>
+	<script src= "js/angular-cookies.min.js"></script>
+	<script src = "js/app.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-    <script src="app.js"></script>
-    
-  </head>
-
-  <body ng-controller="AnswerController">
-  
-
-	<div ng-show = "page == 'connexion' " >
- 		<button name = "connexion" ng-click="connexionMethod()"> connexion </button>
- 		<button name = "play" ng-click="openPagePlay()"> play </button>
- 	</div>
-
-  	
-  	<div ng-show = "page == 'play' " >
-  		{{ funiculaire }}
- 		<button name = "actor" ng-click="chooseActor()"> actor </button>
- 		<button name = "musician" ng-click="chooseMusician()"> muscician </button>
- 		<img ng-src="{{currentQuestionImage}}"  style="height: 500px;"/>  
- 	</div>
- 	
- 	
- 	
- 	
-  </body>
-
+</html>
 
 
 
@@ -118,7 +133,4 @@
       </div>
 
   </body> -->
-
-</html>
-
 
