@@ -32,7 +32,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.etatQ = "Qui" ;
 	$scope.tabPersonnes;
 	$scope.tabReponses;
-	$scope.page = "connexion";
+	$scope.page = "home";
 	$scope.user = null;
 	
 	if ($cookies.get("google_id")) {
@@ -43,7 +43,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
                 $scope.user = user;
             },
             function() {
-                console.log("Oups! Failure to connect...");
+                console.log("No user connected yet...");
             }
         )
     }
@@ -178,10 +178,16 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 		loadQuestions();	
 	}
 	
+	$scope.openPageHome = function(){
+		$scope.page = "home";	
+	}
+	
 	$scope.openPagePlay = function(){
 		$scope.login();
 		$scope.page = "play";	
 	}
+	
+
 
 	function shuffle(array) {
 	 	var currentIndex = array.length, temporaryValue, randomIndex;
