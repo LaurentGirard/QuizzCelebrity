@@ -33,18 +33,11 @@
 	                <a class="navbar-brand topnav" href = "http://localhost:8000" ng-click = "openPageHome()" >Celebrity Quizz</a>
 	            </div>
 	
-	           <div ng-show = "user">
-		           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-		                <ul class="nav navbar-nav navbar-right">
-		                    <li>
-		            			<button type="button" class="btn btn-default navbar-btn" ng-click = 'logout()'>Sign out</button>
-								<p>{{ user.name }}</p>
-		                    </li>
-		                    <li>
-								<img class = "img-circle" ng-src = "{{ user.picture }}" style="width:60px;">
-		                    </li>
-		                </ul>
-		            </div>
+	           	<div ng-show = "user" class = "navbar-right">		              		                   
+ 					<img class = "img-circle" ng-src = "{{ user.picture }}" style="width:50px;">
+		            <button type="button" class="btn btn-default navbar-btn" ng-click = 'logout()'>Sign out</button>
+					
+					<p class="navbar-text">Signed in as {{ user.name }}</p>
 		        </div>
 		        
 	            <div ng-show = "!user">

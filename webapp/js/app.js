@@ -183,7 +183,9 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	}
 	
 	$scope.openPagePlay = function(){
-		$scope.login();
+		if(!$cookies.get("google_id"))
+			$scope.login();
+		
 		$scope.page = "play";	
 	}
 	
