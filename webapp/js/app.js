@@ -37,6 +37,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.page = "home";
 	$scope.user = null;
 	$scope.questionLoaded =false;
+	$scope.displayMap=false;
 	
 	// ---------------------------------------  LOG IN / LOG OUT ------------------------------------- // 
 	if ($cookies.get("google_id")) {
@@ -181,6 +182,8 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	
 	$scope.chooseMusician = function(){
 		$scope.theme = 'musician';
+		$scope.resultat = 0;
+		$scope.nbQuestion = 0;
 		$scope.loadQuestions();	
 	}
 	
@@ -188,6 +191,23 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.chooseAnswer = function( answer ) {
 
 		if ($scope.tabTrueFalse[answer] == true ){
+			$scope.resultat++;
+			console.log("OUI C'EST CA!!!!");
+		}
+		console.log("RESULTAT ="+$scope.resultat);
+		$scope.changeEtaQ();
+		console.log($scope.etatQ);
+		if ($scope.nbQuestion == 2){
+			$scope.page = "finDuJeu";
+		} else {
+			$scope.prepareQuestion()
+		}
+
+	}
+
+	$scope.chooseAnswerMap = function(answer)
+	{
+		if ($scope.tabReponses[$scope.indexTrue] == answer ){
 			$scope.resultat++;
 			console.log("OUI C'EST CA!!!!");
 		}
@@ -212,9 +232,15 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
        		
    			 case "Quand":
    			 	$scope.etatQ = "Où";
+   			 	$scope.page = "questionsMap";
+   			 	$scope.initMap();   			 	
+   			 	$scope.displayMap=true;
+   			 	console.log($scope.page);
    			 	break;       		 
        		 	
        		 case "Où":
+       		 	$scope.page = "questions";
+       		 	$scope.displayMap=false;
        		  	$scope.etatQ = "Qui";
        		  	$scope.nbQuestion++;
        			 break;
@@ -257,6 +283,68 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	
 	  	return array;
 	}
+
+
+			$scope.setMapPick = function(pick) {
+            $scope.map_pick = pick;
+            $scope.$apply();
+        };
+
+        $scope.initMap = function() {
+            $scope.map_choice = null;
+            var mapCanvas = document.getElementById("map");
+            var myCenter= new google.maps.LatLng(31.6341600,-7.9999400);
+            var mapOptions = {center: myCenter, zoom: 2};
+            var map = new google.maps.Map(mapCanvas, mapOptions);
+            var infowindow = new google.maps.InfoWindow();
+
+            function placeMarker(map,infowindow, location, fn) {
+                var marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    draggable: true
+                });
+                var latLng = new google.maps.LatLng(marker.position.lat(),marker.position.lng());
+
+                infowindow.open(map,marker);
+                geocoderLatLng(map,infowindow,latLng);
+
+                google.maps.event.addListener(marker,'dragend', function(event) {
+                    latLng = new google.maps.LatLng(marker.position.lat(),marker.position.lng());
+                    geocoderLatLng(map,infowindow,latLng);
+                });
+            };
+
+            function geocoderLatLng(map, infowindow,latLng) {
+                var geocoder = new google.maps.Geocoder;
+                geocoder.geocode({'location':latLng}, function(results, status) {
+                    if(status === google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
+                            var i = 0;
+                            while(results[1].address_components[i].types[0] != "country") {
+                                i++;
+                            }
+                            var country = results[1].address_components[i].long_name;
+                            infowindow.setContent(country);
+                            $scope.setMapPick(country);
+                        } else {
+                            console.error('No results found');
+                            infowindow.setContent("");
+                            $scope.setMapPick(null);
+                        }
+                    } else {
+                        console.error('Geocoder failed due to: ' + status);
+                        infowindow.setContent("");
+                        $scope.setMapPick(null);
+                    }
+                });
+            };
+
+            google.maps.event.addListenerOnce(map, 'click', function(event) {
+                placeMarker(map, infowindow, event.latLng);
+            });
+        };
+
 
 }]) ;
 
