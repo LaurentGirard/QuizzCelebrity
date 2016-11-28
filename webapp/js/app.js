@@ -32,9 +32,13 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.etatQ = "Qui" ;
 	$scope.tabPersonnes;
 	$scope.tabReponses;
+	$scope.tabTrueFalse;
+	$scope.resultat = 0;
 	$scope.page = "home";
 	$scope.user = null;
+	$scope.questionLoaded =false;
 	
+	// ---------------------------------------  LOG IN / LOG OUT ------------------------------------- // 
 	if ($cookies.get("google_id")) {
         GData.setUserId($cookies.get("google_id"));
 
@@ -65,73 +69,73 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
         $cookies.remove("google_id");
     };
 	
-	// Méthode pour récupérer la liste des entités
-	function loadQuestions() {
+    // ------------------------------------------------------------------------------------------------------- // 
 
-		GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:$scope.theme}).then(function(resp) {
+
+	// Méthode pour récupérer la liste des entités
+	$scope.loadQuestions = function() {
+
+		if ($scope.questionLoaded == false){
+			GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:$scope.theme}).then(function(resp) {
 	    
-		var arr = resp.responseJSON;
-		arr = shuffle(arr); //On mélange l'array	     
-	     
-	    jsonObj.notparsed = JSON.stringify(arr);	     
-	    jsonObj.parsed = JSON.parse(jsonObj.notparsed);
-	 
-	    runApp(jsonObj);		
+			var arr = resp.responseJSON; // on récupère les données du datastore dans un array
+			arr = $scope.shuffle(arr); //On mélange l'array	     
+	   	 	console.log("LOADQUESTION");
+	   		jsonObj.notparsed = JSON.stringify(arr);	     
+	   		jsonObj.parsed = JSON.parse(jsonObj.notparsed);
+	 		$scope.tabPersonnes = jsonObj.parsed;		// On parse le tout et on met le résultat dans tabPersonnes
+	 		console.log($scope.tabPersonnes);
+	 		$scope.questionLoaded = true;
+	 		$scope.prepareQuestion();
+
 	
-	    }, function() {
-	        console.log('error :(');
-	    });
+	    	}, function() {
+	    	    console.log('error :(');
+	   		 });
+		}
 	}
         
-	function runApp(json){
-		$scope.tabPersonnes = json.parsed;
-	
-		$scope.currentQuestionImage = $scope.tabPersonnes[$scope.nbQuestion].properties.Image;
-		console.log("IMAGE = " + $scope.currentQuestionImage);
-		$scope.tabReponses = [ null, null, null, null ];
-		 
-		prepareQuestion();
-		$scope.funiculaire = json.parsed[0].properties.Name;
-	}
-	
-	function play() {
+		
+	/*$scope.play = function() {
 		resultat =0;
 		nextQuestion();
 	}
 	
-	function nextQuestion(){
+	$scope.nextQuestion = function() {
 		if (nbQuestion = 10)
 			finDuJeu();
 		else
 			prepareQuestion();
-	}
+	}*/
 	
-	function prepareQuestion()
+	$scope.prepareQuestion = function()
 	{
-		var tab = [false , false, true, false];
-		tab = shuffle(tab);
-		console.log(tab);
-		var indexTrue = tab.findIndex(estTrue);
+		console.log("PREPARE QUESTION");
+		$scope.tabTrueFalse = [false , false, true, false];
+		$scope.tabTrueFalse = $scope.shuffle($scope.tabTrueFalse);
+		console.log($scope.tabTrueFalse);
+
+		var indexTrue = $scope.tabTrueFalse.findIndex($scope.estTrue);
 		console.log("index true = " + indexTrue);
-				
-		$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Name;
-		console.log($scope.tabPersonnes);
-		
-		fillTabReponses(indexTrue);
-		
+
+		$scope.tabReponses = [ null, null, null, null ];
+		$scope.fillTabReponses(indexTrue);				
 		console.log($scope.tabReponses);
+
 		$scope.currentQuestionImage = $scope.tabPersonnes[$scope.nbQuestion].properties.Image;
-		console.log($scope.currentQuestionImage);
+		$scope.page = "questions" ;
+		
 	}
 	
 	
-	function estTrue(element, index, array) {
+	$scope.estTrue =function(element, index, array) {
  		return element;
  	}
 	
-	function fillTabReponses(indexTrue)
+	/* TO DO : Changer le "3" en en fonction du nombre de questions, pour 10 questions ça sera 10*/
+	$scope.fillTabReponses = function(indexTrue)
 	{
-		switch("Qui") {
+		switch($scope.etatQ) {
     		
 			case "Qui":
     		
@@ -169,15 +173,59 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	
 	$scope.chooseActor = function(){
 		$scope.theme = 'actor';
-		loadQuestions();	
+		$scope.resultat = 0;
+		$scope.nbQuestion = 0;
+		$scope.loadQuestions();	
 	}
 	
 	
 	$scope.chooseMusician = function(){
 		$scope.theme = 'musician';
-		loadQuestions();	
+		$scope.loadQuestions();	
 	}
 	
+	/*TO DO : changer le "== 2" en "==10" quand on aura le tabPersonnes rempli à fond ( avec 40 personnes)*/
+	$scope.chooseAnswer = function( answer ) {
+
+		if ($scope.tabTrueFalse[answer] == true ){
+			$scope.resultat++;
+			console.log("OUI C'EST CA!!!!");
+		}
+		console.log("RESULTAT ="+$scope.resultat);
+		$scope.changeEtaQ();
+		console.log($scope.etatQ);
+		if ($scope.nbQuestion == 2){
+			$scope.page = "finDuJeu";
+		} else {
+			$scope.prepareQuestion()
+		}
+
+	}
+
+	$scope.changeEtaQ = function(){
+
+		switch($scope.etatQ) {
+    		
+			case "Qui":
+    			$scope.etatQ = "Quand";
+				break;
+       		
+   			 case "Quand":
+   			 	$scope.etatQ = "Où";
+   			 	break;       		 
+       		 	
+       		 case "Où":
+       		  	$scope.etatQ = "Qui";
+       		  	$scope.nbQuestion++;
+       			 break;
+       		 
+    		default: 
+    			console.log("Default du swith in changeEtaQ");
+		}
+
+	}
+
+
 	$scope.openPageHome = function(){
 		$scope.page = "home";	
 	}
@@ -191,7 +239,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	
 
 
-	function shuffle(array) {
+	$scope.shuffle =function(array) {
 	 	var currentIndex = array.length, temporaryValue, randomIndex;
 	
 	  	// While there remain elements to shuffle...
