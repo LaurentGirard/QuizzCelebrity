@@ -38,6 +38,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.user = null;
 	$scope.questionLoaded =false;
 	$scope.displayMap=false;
+	$scope.mapLoaded=false;
 	
 	// ---------------------------------------  LOG IN / LOG OUT ------------------------------------- // 
 	if ($cookies.get("google_id")) {
@@ -75,7 +76,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 
 	// Méthode pour récupérer la liste des entités
 	$scope.loadQuestions = function() {
-
+		console.log($scope.questionLoaded);
 		if ($scope.questionLoaded == false){
 			GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:$scope.theme}).then(function(resp) {
 	    
@@ -115,6 +116,11 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 		$scope.tabTrueFalse = [false , false, true, false];
 		$scope.tabTrueFalse = $scope.shuffle($scope.tabTrueFalse);
 		console.log($scope.tabTrueFalse);
+
+		if ($scope.etatQ == "Où" && $scope.mapLoaded == false) {
+            $scope.initMap();
+            $scope.mapLoaded = true;
+        }
 
 		var indexTrue = $scope.tabTrueFalse.findIndex($scope.estTrue);
 		console.log("index true = " + indexTrue);
@@ -176,6 +182,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 		$scope.theme = 'actor';
 		$scope.resultat = 0;
 		$scope.nbQuestion = 0;
+		$scope.questionLoaded = false;
 		$scope.loadQuestions();	
 	}
 	
@@ -184,6 +191,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 		$scope.theme = 'musician';
 		$scope.resultat = 0;
 		$scope.nbQuestion = 0;
+		$scope.questionLoaded = false;
 		$scope.loadQuestions();	
 	}
 	
@@ -233,7 +241,8 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
    			 case "Quand":
    			 	$scope.etatQ = "Où";
    			 	$scope.page = "questionsMap";
-   			 	$scope.initMap();   			 	
+   			 	$scope.map_pick = null;
+   			 				 	
    			 	$scope.displayMap=true;
    			 	console.log($scope.page);
    			 	break;       		 
@@ -259,7 +268,8 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.openPagePlay = function(){
 		if(!$cookies.get("google_id"))
 			$scope.login();
-		
+		$scope.resultat = 0;
+		$scope.nbQuestion = 0;
 		$scope.page = "play";	
 	}
 	
@@ -346,6 +356,26 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
         };
 
 
+    $scope.addScore = function() {
+    	GApi.execute('quizzcelebrityendpoint','insertScoreEntity',{id: $cookies.get("google_id"), name: $scope.user.name, score: $scope.resultat}).then(function(resp) {
+     	   console.log('Good!');
+    	  },function(e) {
+     	   console.log('Error!');
+     	   console.log(e);
+    	  });
+   	 }
+
+
+  $scope.listScores = function(callback) {
+    GApi.execute('quizzcelebrityendpoint','listScoreEntity').then(function(resp) {
+      callback(resp.items);
+    }, function() {
+      console.log('Error!');
+    });
+  }
+
+
+
 }]) ;
 
 
@@ -380,7 +410,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 
 
 
-
+/*
 
 var questions = [
   {
@@ -485,8 +515,7 @@ app.controller('AnswerController2', ['$scope1', 'GApi', function($scope, GApi){
 
 $scope.openPage('play');
 
-}]) ;
-
+}]) ;*/
 
 
 

@@ -155,6 +155,10 @@
 		                            </li>
 		     
 		                        </ul>
+		                        <div ng-show="displayMap">
+								<div id="map" style="width:100%; height: 300px;"></div>
+
+								</div>
 
 		                    </div>
 		                </div>
@@ -165,22 +169,42 @@
 		    </div>
 	    </div>
 
+
+	    <div ng-show = "page == 'finDuJeu' " >
+		    <div class="intro-header">
+		        <div class="container">
+		            <div class="row">
+		                <div class="col-lg-12">
+		                    <div class="intro-message">
+		                        <h1>Fin du jeu ! Bien joué ! :)</h1>
+		                        <h3> Votre résultat est de : {{resultat}} </h3>
+		                        <hr class="intro-divider">
+		                        <ul class="list-inline intro-social-buttons">
+		                       		<li>
+		                                <a ng-click = openPagePlay() class="btn btn-default btn-lg"><i class="glyphicon glyphicon-expand"></i> <span class="network-name">Play !</span></a>
+		                            </li>
+		                            <li>
+		                                <a ng-click = addScore() class="btn btn-default btn-lg"><span class="network-name">Publie ton score!</span></a>
+		                            </li>
+		                            <li>
+		                                <a ng-click = listScores() class="btn btn-default btn-lg"><span class="network-name">Liste des Scores</span></a>
+		                            </li>
+
+		                            
+		     
+		                        </ul>
+		                       
+		                    </div>
+		                </div>
+		            </div>
+		
+		        </div>
+		        <!-- /.container -->
+		    </div>
+	    </div>
+
 	    
-				<div ng-show="displayMap">
-					<div id="map" style="width:100%; height: 300px;"></div>
-
-					<!-- <a class="btn-large blue lighten-1 left ng-class: {
-							'blue': question.answered == null,
-							'disabled': question.answered != null
-						}"
-						ng-show="map_pick != null"
-						ng-click="chooseAnswer(map_pick)">
-						Valider
-					</a> -->
-
-					
-				</div>
-
+				
     
 		<!-- <div ng-show = "page ==  'connexion' " >
 			<button name = "play" ng-click="openPagePlay()"> play </button>
