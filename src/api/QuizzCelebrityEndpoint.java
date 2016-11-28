@@ -192,6 +192,7 @@ public class QuizzCelebrityEndpoint {
 		return response;
 	}
 	
+	@ApiMethod(name = "containsAdminEntity")
 	private boolean containsAdminEntity(AdminEntity adminentity) {
 		PersistenceManager mgr = getPersistenceManager();
 		boolean contains = true;
