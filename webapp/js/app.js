@@ -379,8 +379,10 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 }]) ;
 
 
+app.controller('AdminController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData', function($scope, GApi, GAuth, $cookies, GData){
 
-
+	
+}]) ;
 
 
 
