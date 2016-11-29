@@ -10,8 +10,8 @@ var jsonObj = {
 var resultat;
 var stateQ;
 
-app.run(['GApi', 'GAuth',
-  function(GApi, GAuth) {
+app.run(['GApi', 'GAuth', '$rootScope', '$cookies', 'GData',
+  function(GApi, GAuth, $rootScope, $cookies, GData) {
       var BASE = 'https://quizzcelebrity-149400.appspot.com/_ah/api';
       GApi.load('quizzcelebrityendpoint','v1',BASE).then(function(resp) {
           console.log('api: ' + resp.api + ', version: ' + resp.version + ' loaded');
@@ -22,8 +22,42 @@ app.run(['GApi', 'GAuth',
       GAuth.setClient(CLIENT);    
       GAuth.setScope('https://www.googleapis.com/auth/userinfo.profile');
       GAuth.load();
+      
+  	// ---------------------------------------  LOG IN / LOG OUT ------------------------------------- // 
+  	
+  	$rootScope.user = null;
+
+      if ($cookies.get("google_id")) {
+          GData.setUserId($cookies.get("google_id"));
+
+          GAuth.checkAuth().then(
+              function(user) {
+                  $rootScope.user = user;
+              },
+              function() {
+                  console.log("No user connected yet...");
+              }
+          )
+      }
+  	
+      $rootScope.login = function() {
+          GAuth.login().then(function(user) {
+              $rootScope.user = user;
+              $cookies.put("google_id", user.id);
+          }, function() {
+              console.log("Oups! Failure to connect...");
+          });
+      };
+      
+      $rootScope.logout = function() {
+          GAuth.logout();
+          GData.setUserId(null);
+          $rootScope.user = null;
+          $cookies.remove("google_id");
+      };
   }
 ]);
+
 
 app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData', function($scope, GApi, GAuth, $cookies, GData){
 
@@ -36,41 +70,9 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.tabTrueFalse;
 	$scope.resultat = 0;
 	$scope.page = "home";
-	$scope.user = null;
 	$scope.questionLoaded =false;
 	$scope.displayMap=false;
 	$scope.mapLoaded=false;
-	
-	// ---------------------------------------  LOG IN / LOG OUT ------------------------------------- // 
-	if ($cookies.get("google_id")) {
-        GData.setUserId($cookies.get("google_id"));
-
-        GAuth.checkAuth().then(
-            function(user) {
-                $scope.user = user;
-            },
-            function() {
-                console.log("No user connected yet...");
-            }
-        )
-    }
-	
-    $scope.login = function() {
-        GAuth.login().then(function(user) {
-            $scope.user = user;
-            $cookies.put("google_id", user.id);
-        }, function() {
-            console.log("Oups! Failure to connect...");
-        });
-    };
-    
-    // Fake logout (cannot change the user, his token isn't destroy yet -> to fix)
-    $scope.logout = function() {
-        GAuth.logout();
-        GData.setUserId(null);
-        $scope.user = null;
-        $cookies.remove("google_id");
-    };
 	
     // ------------------------------------------------------------------------------------------------------- // 
 
@@ -215,10 +217,6 @@ $scope.changeWritenQuestion = function(){
     		default: 
     			console.log("Default du swith in changeWritenQuestion");
 		}
-
-
-
-
 }
 
 
@@ -422,7 +420,7 @@ $scope.changeWritenQuestion = function(){
 }]) ;
 
 
-app.controller('AdminController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData', function($scope, GApi, GAuth, $cookies, GData){
+app.controller('AdminController', ['$scope', '$location', function($scope, $location){
 
 	
 }]) ;
