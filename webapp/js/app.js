@@ -149,7 +149,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
     			$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Name;
         		for (var i = 0; i < 4 ; i++) {
 	    			if ( i != indexTrue)
-						$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Name;
+						$scope.tabReponses[i] = $scope.tabPersonnes[10+i].properties.Name;
 				}
 				
        		break;
@@ -159,7 +159,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
    			 	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date
   	   	   		for (var i = 0; i < 4 ; i++) {
 	    			if (i != indexTrue)
-						$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Date;
+						$scope.tabReponses[i] = $scope.tabPersonnes[10+i].properties.Date;
 				}
        		 break;       		 
        		 	
@@ -168,7 +168,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
        		  	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Country;
   	   	   		for (var i = 0; i < 4 ; i++) {
 	    			if (i != indexTrue)
-						$scope.tabReponses[i] = $scope.tabPersonnes[3+i].properties.Country;
+						$scope.tabReponses[i] = $scope.tabPersonnes[10+i].properties.Country;
 				}
        		 break;
        		 
@@ -205,7 +205,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 		console.log("RESULTAT ="+$scope.resultat);
 		$scope.changeEtaQ();
 		console.log($scope.etatQ);
-		if ($scope.nbQuestion == 2){
+		if ($scope.nbQuestion == 10){
 			$scope.page = "finDuJeu";
 		} else {
 			$scope.prepareQuestion()

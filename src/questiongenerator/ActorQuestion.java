@@ -18,7 +18,7 @@ public class ActorQuestion extends Question{
 					+ "?birthPlace dbp:commonName ?country."
 					+ "FILTER regex(?name, '^((?![éàè,íóć.ùúûüñðáâãý]).)*$')"
 					+ "}"
-					+ "limit 10"
+					+ "limit 150"
 					+ "offset "
 					+ Integer.toString(offset_rand);
 	}

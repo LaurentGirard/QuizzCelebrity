@@ -186,8 +186,9 @@ public class QuizzCelebrityEndpoint {
 		Query q = new Query("Person").setFilter(new FilterPredicate("thème", FilterOperator.EQUAL, theme));
 		PreparedQuery pq = datastore.prepare(q);
 
-		List<Entity> result = pq.asList(FetchOptions.Builder.withDefaults());
+		List<Entity> result = pq.asList(FetchOptions.Builder.withLimit(40));
 		response.setResponseJSON(result);
+		
 		
 		return response;
 	}

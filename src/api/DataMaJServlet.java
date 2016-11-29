@@ -21,10 +21,10 @@ public class DataMaJServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		resp.setContentType("text/plain");
-		resp.getWriter().println("Hello, world455");
+		resp.getWriter().println("Maj effectuée ! :)");
 		
 		datastore = DatastoreServiceFactory.getDatastoreService();
-		
+		//  TO DO : DELETE
 		majTheme("actor", datastore);
 		majTheme("musician", datastore);
 	}
@@ -32,7 +32,7 @@ public class DataMaJServlet extends HttpServlet {
 	public void majTheme(String theme, DatastoreService datastore){
 		
 		Entity p;
-		
+		int j = 0;
 		Literal name, date, country, image;
 		
 		Generator generator = new Generator(theme);
@@ -40,6 +40,10 @@ public class DataMaJServlet extends HttpServlet {
 		QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", generator.getType_question().getRequest());
 
 		ResultSet results = qexec.execSelect();
+		
+		if (theme == "musician"){
+			j = 150;
+		}
 		
 		while (results.hasNext())
 		{
@@ -50,7 +54,7 @@ public class DataMaJServlet extends HttpServlet {
 			country = binding.getLiteral("cnt");
 			image = binding.getLiteral("img");
 			
-			p = new Entity("Person", name.toString());
+			p = new Entity("Person", Integer.toString(j));
 			
 			p.setProperty("Name", name.toString());
 			p.setProperty("Date", date.toString());
@@ -59,6 +63,7 @@ public class DataMaJServlet extends HttpServlet {
 			p.setProperty("thème", theme);
 		
 			datastore.put(p);
+			j++;
 		}
 		
 		qexec.close() ;
