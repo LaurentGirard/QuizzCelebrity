@@ -30,6 +30,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.theme = "actor";
 	$scope.nbQuestion = 0 ;
 	$scope.etatQ = "Qui" ;
+	$scope.questionShowed = "Qui est cette personne ?";
 	$scope.tabPersonnes;
 	$scope.tabReponses;
 	$scope.tabTrueFalse;
@@ -85,7 +86,8 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	   	 	console.log("LOADQUESTION");
 	   		jsonObj.notparsed = JSON.stringify(arr);	     
 	   		jsonObj.parsed = JSON.parse(jsonObj.notparsed);
-	 		$scope.tabPersonnes = jsonObj.parsed;		// On parse le tout et on met le résultat dans tabPersonnes
+	 		$scope.tabPersonnes = jsonObj.parsed;
+	 		$scope.tabPersonnes = $scope.shuffle($scope.tabPersonnes);	// On parse le tout et on met le résultat dans tabPersonnes
 	 		console.log($scope.tabPersonnes);
 	 		$scope.questionLoaded = true;
 	 		$scope.prepareQuestion();
@@ -142,14 +144,20 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	/* TO DO : Changer le "3" en en fonction du nombre de questions, pour 10 questions ça sera 10*/
 	$scope.fillTabReponses = function(indexTrue)
 	{
+		var j = 3*$scope.nbQuestion;
+		var k = 0;
+
 		switch($scope.etatQ) {
     		
+			
 			case "Qui":
     		
     			$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Name;
         		for (var i = 0; i < 4 ; i++) {
-	    			if ( i != indexTrue)
-						$scope.tabReponses[i] = $scope.tabPersonnes[10+i].properties.Name;
+	    			if ( i != indexTrue){
+						$scope.tabReponses[i] = $scope.tabPersonnes[10+j+k].properties.Name;
+						k++;
+					}
 				}
 				
        		break;
@@ -158,8 +166,11 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
    			 
    			 	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date
   	   	   		for (var i = 0; i < 4 ; i++) {
-	    			if (i != indexTrue)
-						$scope.tabReponses[i] = $scope.tabPersonnes[10+i].properties.Date;
+	    			if (i != indexTrue){
+						$scope.tabReponses[i] = $scope.tabPersonnes[10+j+k].properties.Date;
+						k++;
+	    			}
+					
 				}
        		 break;       		 
        		 	
@@ -167,8 +178,10 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
        		  
        		  	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Country;
   	   	   		for (var i = 0; i < 4 ; i++) {
-	    			if (i != indexTrue)
-						$scope.tabReponses[i] = $scope.tabPersonnes[10+i].properties.Country;
+	    			if (i != indexTrue){
+						$scope.tabReponses[i] = $scope.tabPersonnes[10+j+k].properties.Country;
+						k++;
+	    			}
 				}
        		 break;
        		 
@@ -178,6 +191,37 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	
 	}
 	
+
+$scope.changeWritenQuestion = function(){
+
+	switch($scope.etatQ) {
+    		
+			case "Qui":
+    		
+    			$scope.questionShowed = "En quelle année est née cette magnifique personne ?";
+				
+       		break;
+       		
+   			 case "Quand":
+   			 
+   			 	$scope.questionShowed = "Dans quelle pays est-elle née ? Perdue en Mongolie ?";
+       		 break;       		 
+       		 	
+       		 case "Où":
+       		  
+       		  	$scope.questionShowed = "Qui est cette personne ?";
+       		 break;
+       		 
+    		default: 
+    			console.log("Default du swith in changeWritenQuestion");
+		}
+
+
+
+
+}
+
+
 	$scope.chooseActor = function(){
 		$scope.theme = 'actor';
 		$scope.resultat = 0;
@@ -203,13 +247,11 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 			console.log("OUI C'EST CA!!!!");
 		}
 		console.log("RESULTAT ="+$scope.resultat);
-		$scope.changeEtaQ();
+		$scope.changeWritenQuestion();
+		$scope.changeEtaQ();		
 		console.log($scope.etatQ);
-		if ($scope.nbQuestion == 10){
-			$scope.page = "finDuJeu";
-		} else {
-			$scope.prepareQuestion()
-		}
+		$scope.prepareQuestion()
+		
 
 	}
 
@@ -220,9 +262,10 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 			console.log("OUI C'EST CA!!!!");
 		}
 		console.log("RESULTAT ="+$scope.resultat);
+		$scope.changeWritenQuestion();
 		$scope.changeEtaQ();
 		console.log($scope.etatQ);
-		if ($scope.nbQuestion == 2){
+		if ($scope.nbQuestion == 10){
 			$scope.page = "finDuJeu";
 		} else {
 			$scope.prepareQuestion()
@@ -316,7 +359,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
                 });
                 var latLng = new google.maps.LatLng(marker.position.lat(),marker.position.lng());
 
-                infowindow.open(map,marker);
+               // infowindow.open(map,marker);
                 geocoderLatLng(map,infowindow,latLng);
 
                 google.maps.event.addListener(marker,'dragend', function(event) {
