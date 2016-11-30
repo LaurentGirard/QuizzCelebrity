@@ -166,7 +166,18 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
        		
    			 case "Quand":
    			 
-   			 	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date
+   				/*var date = $scope.tabPersonnes[$scope.nbQuestion].properties.Date;
+   				$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date;
+   				
+   				for (var i = 0; i < 4 ; i++) {
+	    			if (i != indexTrue){
+	    				var randomNumber = Math.floor(Math.random() * 21) - 10;
+						$scope.tabReponses[i] = date+randomNumber;
+	    			}*/
+   				
+   				
+   				 
+   			 	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date;
   	   	   		for (var i = 0; i < 4 ; i++) {
 	    			if (i != indexTrue){
 						$scope.tabReponses[i] = $scope.tabPersonnes[10+j+k].properties.Date;
@@ -237,7 +248,7 @@ $scope.changeWritenQuestion = function(){
 		$scope.loadQuestions();	
 	}
 	
-	/*TO DO : changer le "== 2" en "==10" quand on aura le tabPersonnes rempli à fond ( avec 40 personnes)*/
+
 	$scope.chooseAnswer = function( answer ) {
 
 		if ($scope.tabTrueFalse[answer] == true ){
@@ -263,7 +274,7 @@ $scope.changeWritenQuestion = function(){
 		$scope.changeWritenQuestion();
 		$scope.changeEtaQ();
 		console.log($scope.etatQ);
-		if ($scope.nbQuestion == 10){
+		if ($scope.nbQuestion == 5){
 			$scope.page = "finDuJeu";
 		} else {
 			$scope.prepareQuestion()
@@ -311,6 +322,8 @@ $scope.changeWritenQuestion = function(){
 			$scope.login();
 		$scope.resultat = 0;
 		$scope.nbQuestion = 0;
+		$scope.etatQ ="Qui";
+		$scope.questionShowed = "Qui est cette personne ?";
 		$scope.page = "play";	
 	}
 	
@@ -418,37 +431,6 @@ $scope.changeWritenQuestion = function(){
 
 
 }]) ;
-
-
-app.controller('AdminController', ['$scope', '$location', function($scope, $location){
-
-	
-}]) ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
