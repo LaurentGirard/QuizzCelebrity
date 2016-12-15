@@ -11,11 +11,13 @@ public class ScoreEntity {
 	@PrimaryKey
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
 	Long id;
-
+	@Persistent
+	String google_id;
 	@Persistent
 	String name;
 	@Persistent
 	int score;
+	
 	public Long getId() {
 		return id;
 	}
@@ -33,6 +35,13 @@ public class ScoreEntity {
 	}
 	public void setScore(int score) {
 		this.score = score;
+	}
+	
+	public String getGoogle_id() {
+		return google_id;
+	}
+	public void setGoogle_id(String google_id) {
+		this.google_id = google_id;
 	}
 
 

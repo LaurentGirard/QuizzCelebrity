@@ -29,7 +29,6 @@ app.run(['GApi', 'GAuth', '$rootScope', '$cookies', 'GData',
 
       if ($cookies.get("google_id")) {
           GData.setUserId($cookies.get("google_id"));
-
           GAuth.checkAuth().then(
               function(user) {
                   $rootScope.user = user;
@@ -73,6 +72,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.questionLoaded =false;
 	$scope.displayMap=false;
 	$scope.mapLoaded=false;
+	$scope.scoreAdded=false;
 	
     // ------------------------------------------------------------------------------------------------------- // 
 
@@ -211,13 +211,13 @@ $scope.changeWritenQuestion = function(){
     		
 			case "Qui":
     		
-    			$scope.questionShowed = "En quelle année est née cette magnifique personne ?";
+    			$scope.questionShowed = "En quelle année est née cette personne ?";
 				
        		break;
        		
    			 case "Quand":
    			 
-   			 	$scope.questionShowed = "Dans quelle pays est-elle née ? Perdue en Mongolie ?";
+   			 	$scope.questionShowed = "Dans quelle pays est-elle née ?";
        		 break;       		 
        		 	
        		 case "Où":
@@ -236,6 +236,7 @@ $scope.changeWritenQuestion = function(){
 		$scope.resultat = 0;
 		$scope.nbQuestion = 0;
 		$scope.questionLoaded = false;
+		$scope.scoreAdded=false;
 		$scope.loadQuestions();	
 	}
 	
@@ -245,6 +246,7 @@ $scope.changeWritenQuestion = function(){
 		$scope.resultat = 0;
 		$scope.nbQuestion = 0;
 		$scope.questionLoaded = false;
+		$scope.scoreAdded=false;
 		$scope.loadQuestions();	
 	}
 	
@@ -253,9 +255,7 @@ $scope.changeWritenQuestion = function(){
 
 		if ($scope.tabTrueFalse[answer] == true ){
 			$scope.resultat++;
-			console.log("OUI C'EST CA!!!!");
 		}
-		console.log("RESULTAT ="+$scope.resultat);
 		$scope.changeWritenQuestion();
 		$scope.changeEtaQ();		
 		console.log($scope.etatQ);
@@ -268,13 +268,10 @@ $scope.changeWritenQuestion = function(){
 	{
 		if ($scope.tabReponses[$scope.indexTrue] == answer ){
 			$scope.resultat++;
-			console.log("OUI C'EST CA!!!!");
 		}
-		console.log("RESULTAT ="+$scope.resultat);
 		$scope.changeWritenQuestion();
 		$scope.changeEtaQ();
-		console.log($scope.etatQ);
-		if ($scope.nbQuestion == 5){
+		if ($scope.nbQuestion == 1){
 			$scope.page = "finDuJeu";
 		} else {
 			$scope.prepareQuestion()
@@ -411,24 +408,35 @@ $scope.changeWritenQuestion = function(){
 
 
     $scope.addScore = function() {
-    	GApi.execute('quizzcelebrityendpoint','insertScoreEntity',{id: $cookies.get("google_id"), name: $scope.user.name, score: $scope.resultat}).then(function(resp) {
-     	   console.log('Good!');
-    	  },function(e) {
-     	   console.log('Error!');
-     	   console.log(e);
-    	  });
-   	 }
-
+    	if(!$scope.scoreAdded){
+    		$scope.scoreAdded=true;
+	    	GApi.execute('quizzcelebrityendpoint','insertScoreEntity',{id: Math.floor(Math.random()*1000000)+1, google_id: $cookies.get("google_id"), name: $scope.user.name, score: $scope.resultat}).then(function(resp) {
+	    	  },function(e) {
+	     	   console.log('Error!');
+	     	   console.log(e);
+	    	  });
+	    	$scope.openPageHighscores();
+    	}
+    	else{
+    		console.log("Score déjà ajouté !!");
+    	}
+   	 };
 
   $scope.listScores = function(callback) {
     GApi.execute('quizzcelebrityendpoint','listScoreEntity').then(function(resp) {
-      callback(resp.items);
+    	callback(resp.items);
     }, function() {
       console.log('Error!');
     });
-  }
+  };
 
-
+  $scope.openPageHighscores = function(){
+	  $scope.page = "highscores";
+      $scope.highscores = null;
+      $scope.listScores(function(data) {
+        $scope.highscores = data;
+      });
+  };
 
 }]) ;
 

@@ -9,7 +9,7 @@
 	    
 	    <title>Celebrity Quizz</title>
 	    
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link rel="stylesheet" href="css/style.css">
 	
 	    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">		
@@ -17,7 +17,7 @@
 		
 	</head>
 
-	<body ng-controller="QuizzController">
+	<body ng-controller="QuizzController" class = "background">
 	
 		<!-- Navigation -->
 	    <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
@@ -31,6 +31,10 @@
 	                    <span class="icon-bar"></span>
 	                </button>
 	                <a class="navbar-brand topnav" href = "https://quizzcelebrity-149400.appspot.com/" ng-click = "openPageHome()" >Celebrity Quizz</a>
+	                
+	                <div class = "navbar-right">		              		                   
+		            	<button type="button" class="btn btn-default navbar-btn" ng-click = 'openPageHighscores()'>Highscores</button>
+		        	</div>
 	            </div>
 	
 	           	<div ng-show = "user" class = "navbar-right">		              		                   
@@ -112,7 +116,7 @@
 		                <div class="col-lg-12">
 		                    <div class="intro-message">
 		                        <h1>{{ questionShowed }}</h1>
-		                        <h3><img ng-src="{{currentQuestionImage}}"  style="height: 200px;"/></h3>
+		                        <img ng-src="{{currentQuestionImage}}"  style="height: 200px;"/>
 		                        <hr class="intro-divider">
 		                        <ul class="list-inline intro-social-buttons">
 		                            <li>
@@ -137,30 +141,48 @@
 		    </div>
 	    </div>
 
-	    <div ng-show = "displayMap" >
-		    <div class="intro-header">
-		        <div class="container">
+	    <div ng-show = "displayMap">
+<!-- 		    <div class="intro-header">
+ -->		        <div class="container">
 		            <div class="row">
-		                <div class="col-lg-12">
+		                <!-- <div class="col-lg-12">
 		                    <div class="intro-message">
 		                        <h1>{{ questionShowed }}</h1>
-		                        <h3><img ng-src="{{currentQuestionImage}}"  style="height: 200px;"/></h3>
-		                        <hr class="intro-divider">
+		                        <img ng-src="{{currentQuestionImage}}"  style="height: 200px;"/>
 		                        <ul class="list-inline intro-social-buttons">
 		                            <li>
 		                                <a href="" class="btn btn-default btn-lg" ng-click="chooseAnswerMap(map_pick)">  <span class="network-name">{{map_pick}}</span></a>
 		                            </li>
 		                        </ul>
-		                        <div ng-show="displayMap">
-								<div id="map" style="width:100%; height: 300px;"></div>
-
+		                        <div class = "displayMap" ng-show="displayMap">
+									<div id="map" style="width:50%; height: 300px;"></div>
 								</div>
 		                    </div>
+		                </div> -->
+		                <div class = "intro-header">
+		                	<div class = "col-lg-12">
+		   						<div class = "intro-message-map">
+		                			<h1>{{ questionShowed }}</h1>
+		                		</div>
+		                	</div>
+		                </div>
+		            </div>
+		            <div class = "row">
+		                <div class = "col-lg-4 boutonJoli">
+		                	<img ng-src="{{currentQuestionImage}}"  style="height: 200px;"/>
+ 	                        <ul ng-show = "!(map_pick == null)" class="list-inline intro-social-buttons boutonJoliText">
+	                            <li>
+	                                <a class="btn btn-default btn-lg" ng-click="chooseAnswerMap(map_pick)">  <span class="network-name">{{map_pick}}</span></a>
+	                            </li>
+	                        </ul>
+		                </div>
+		                <div class = "col-lg-offset-1 col-lg-7">
+		                	<div id="map" style="width:100%; height: 350px;"></div>
 		                </div>
 		            </div>
 		        </div>
 		        <!-- /.container -->
-		    </div>
+		    <!-- </div> -->
 	    </div>
 
 	    <div ng-show = "page == 'finDuJeu' " >
@@ -174,13 +196,13 @@
 		                        <hr class="intro-divider">
 		                        <ul class="list-inline intro-social-buttons">
 		                       		<li>
-		                                <a ng-click = openPagePlay() class="btn btn-default btn-lg"><i class="glyphicon glyphicon-expand"></i> <span class="network-name">Play !</span></a>
+		                                <a ng-click = "openPagePlay()" class="btn btn-default btn-lg"><i class="glyphicon glyphicon-expand"></i> <span class="network-name">Play !</span></a>
 		                            </li>
 		                            <li>
-		                                <a ng-click = addScore() class="btn btn-default btn-lg"><span class="network-name">Publie ton score!</span></a>
+		                                <a ng-click = "addScore()" class="btn btn-default btn-lg"><span class="network-name">Publie ton score!</span></a>
 		                            </li>
 		                            <li>
-		                                <a ng-click = listScores() class="btn btn-default btn-lg"><span class="network-name">Liste des Scores</span></a>
+		                                <a ng-click = "openPageHighscores()" class="btn btn-default btn-lg"><span class="network-name">Liste des Scores</span></a>
 		                            </li>
 		                        </ul>		                       
 		                    </div>
@@ -191,21 +213,41 @@
 		    </div>
 	    </div>
     
-		<!-- <div ng-show = "page ==  'connexion' " >
-			<button name = "play" ng-click="openPagePlay()"> play </button>
-		</div>
-		 	
-		<div ng-show = "page == 'play' " >
-	 		{{ funiculaire }}
-			<button name = "actor" ng-click="chooseActor()"> actor </button>
-			<button name = "musician" ng-click="chooseMusician()"> muscician </button>
-			<img ng-src="{{currentQuestionImage}}"  style="height: 300px;"/>  
-		</div> -->
+	    <div ng-show="page == 'highscores'">
+	    		<div class="intro-header">
+			        <div class="container">
+            	        <div class="row">
+			          		<div class="col-md-6 col-md-offset-3">
+					            <table class="table">
+					              <thead>
+					                <tr>
+					                  <th>#</th>
+					                  <th>Name</th>
+					                  <th>Score</th>
+					                </tr>
+					              </thead>
+					              <tbody>
+					                <tr ng-repeat="score in highscores | orderBy : '-score'">
+					                  <td>{{($index+1)}}</td>
+					                  <td>{{score.name}}</td>
+					                  <td>{{score.score}}</td>
+					                </tr>
+					              </tbody>
+					            </table>
+					            <h4 ng-show="highscores == null">Waiting for data...</h4>
+					          </div>
+		        		</div>
+		      		</div>
+		        </div>
+    	  </div>
+    
+
  	</body>
 	
 	<script src= "js/angular.min.js"></script>
 	<script src= "js/angular-google-gapi.min.js"></script>
 	<script src= "js/angular-cookies.min.js"></script>
+	<script src= "js/jquery-3.1.1.min.js"></script>
 	<script src = "js/app.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?language=en&region=US&key=AIzaSyC0M7KEddpvo0m42rLYEnoXPHBJUiqNasA"></script>
