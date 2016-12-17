@@ -29,6 +29,9 @@ public class Generator {
 		case "actor":
 			type_question = new ActorQuestion();
 			break;
+		case "athlete":
+			type_question = new AthleteQuestion();
+			break;
 		// Can add some types of question here which implements Question
 			
 		default:

@@ -27,6 +27,7 @@ public class DataMaJServlet extends HttpServlet {
 		//  TO DO : DELETE
 		majTheme("actor", datastore);
 		majTheme("musician", datastore);
+		majTheme("athlete", datastore);
 	}
 	
 	public void majTheme(String theme, DatastoreService datastore){
@@ -43,6 +44,8 @@ public class DataMaJServlet extends HttpServlet {
 		
 		if (theme == "musician"){
 			j = 150;
+		}else if(theme == "athlete"){
+			j = 300;
 		}
 		
 		while (results.hasNext())

@@ -171,31 +171,30 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	}
 	
 
-$scope.changeWritenQuestion = function(){
-
-	switch($scope.etatQ) {
-    		
-			case "Qui":
-    		
-    			$scope.questionShowed = "En quelle année est née cette personne ?";
-				
-       		break;
-       		
-   			 case "Quand":
-   			 
-   			 	$scope.questionShowed = "Dans quelle pays est-elle née ?";
-       		 break;       		 
-       		 	
-       		 case "Où":
-       		  
-       		  	$scope.questionShowed = "Qui est cette personne ?";
-       		 break;
-       		 
-    		default: 
-    			console.log("Default du swith in changeWritenQuestion");
-		}
-}
-
+	$scope.changeWritenQuestion = function(){
+	
+		switch($scope.etatQ) {
+	    		
+				case "Qui":
+	    		
+	    			$scope.questionShowed = "En quelle année est née cette personne ?";
+					
+	       		break;
+	       		
+	   			 case "Quand":
+	   			 
+	   			 	$scope.questionShowed = "Dans quelle pays est-elle née ?";
+	       		 break;       		 
+	       		 	
+	       		 case "Où":
+	       		  
+	       		  	$scope.questionShowed = "Qui est cette personne ?";
+	       		 break;
+	       		 
+	    		default: 
+	    			console.log("Default du swith in changeWritenQuestion");
+			}
+	}
 
 	$scope.chooseActor = function(){
 		$scope.theme = 'actor';
@@ -206,7 +205,6 @@ $scope.changeWritenQuestion = function(){
 		$scope.loadQuestions();	
 	}
 	
-	
 	$scope.chooseMusician = function(){
 		$scope.theme = 'musician';
 		$scope.resultat = 0;
@@ -216,6 +214,14 @@ $scope.changeWritenQuestion = function(){
 		$scope.loadQuestions();	
 	}
 	
+	$scope.chooseAthlete = function(){
+		$scope.theme = 'athlete';
+		$scope.resultat = 0;
+		$scope.nbQuestion = 0;
+		$scope.questionLoaded = false;
+		$scope.scoreAdded=false;
+		$scope.loadQuestions();	
+	}
 
 	$scope.chooseAnswer = function( answer ) {
 
