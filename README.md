@@ -15,4 +15,4 @@ Pour lancer et utiliser le projet en local :
 	- faire la commande : php -S localhost:8000
 
 	
-TO DO : Faire un beau README.md et gérer la liste trop grande des highscores
+TO DO : Faire un beau README.md, le switch pour les pays chiants et gérer la liste trop grande des highscores
