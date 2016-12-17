@@ -25,8 +25,7 @@ app.run(['GApi', 'GAuth', '$rootScope', '$cookies', 'GData',
       
   	// ---------------------------------------  LOG IN / LOG OUT ------------------------------------- // 
   	
-  	$rootScope.user = null;
-
+      $rootScope.user = null;
       if ($cookies.get("google_id")) {
           GData.setUserId($cookies.get("google_id"));
           GAuth.checkAuth().then(
@@ -79,47 +78,28 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 
 	// Méthode pour récupérer la liste des entités
 	$scope.loadQuestions = function() {
-		console.log($scope.questionLoaded);
 		if ($scope.questionLoaded == false){
 			GApi.execute('quizzcelebrityendpoint','requeteDatastore', {theme:$scope.theme}).then(function(resp) {
 	    
 			var arr = resp.responseJSON; // on récupère les données du datastore dans un array
 			arr = $scope.shuffle(arr); //On mélange l'array	     
-	   	 	console.log("LOADQUESTION");
 	   		jsonObj.notparsed = JSON.stringify(arr);	     
 	   		jsonObj.parsed = JSON.parse(jsonObj.notparsed);
 	 		$scope.tabPersonnes = jsonObj.parsed;
 	 		$scope.tabPersonnes = $scope.shuffle($scope.tabPersonnes);	// On parse le tout et on met le résultat dans tabPersonnes
-	 		console.log($scope.tabPersonnes);
 	 		$scope.questionLoaded = true;
 	 		$scope.prepareQuestion();
-
 	
 	    	}, function() {
-	    	    console.log('error :(');
+	    	    console.log('error during loading questions');
 	   		 });
 		}
 	}
-        
-		
-	/*$scope.play = function() {
-		resultat =0;
-		nextQuestion();
-	}
-	
-	$scope.nextQuestion = function() {
-		if (nbQuestion = 10)
-			finDuJeu();
-		else
-			prepareQuestion();
-	}*/
-	
+        	
 	$scope.prepareQuestion = function()
 	{
-		console.log("PREPARE QUESTION");
 		$scope.tabTrueFalse = [false , false, true, false];
 		$scope.tabTrueFalse = $scope.shuffle($scope.tabTrueFalse);
-		console.log($scope.tabTrueFalse);
 
 		if ($scope.etatQ == "Où" && $scope.mapLoaded == false) {
             $scope.initMap();
@@ -127,11 +107,9 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
         }
 
 		var indexTrue = $scope.tabTrueFalse.findIndex($scope.estTrue);
-		console.log("index true = " + indexTrue);
 
 		$scope.tabReponses = [ null, null, null, null ];
 		$scope.fillTabReponses(indexTrue);				
-		console.log($scope.tabReponses);
 
 		$scope.currentQuestionImage = $scope.tabPersonnes[$scope.nbQuestion].properties.Image;
 		$scope.page = "questions" ;
@@ -164,18 +142,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 				
        		break;
        		
-   			 case "Quand":
-   			 
-   				/*var date = $scope.tabPersonnes[$scope.nbQuestion].properties.Date;
-   				$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date;
-   				
-   				for (var i = 0; i < 4 ; i++) {
-	    			if (i != indexTrue){
-	    				var randomNumber = Math.floor(Math.random() * 21) - 10;
-						$scope.tabReponses[i] = date+randomNumber;
-	    			}*/
-   				
-   				
+   			 case "Quand":   				
    				 
    			 	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Date;
   	   	   		for (var i = 0; i < 4 ; i++) {
@@ -199,7 +166,6 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
        		 break;
        		 
     		default: 
-    			console.log("Default du swith in fillTabResponses");
 		}
 	
 	}
@@ -258,10 +224,7 @@ $scope.changeWritenQuestion = function(){
 		}
 		$scope.changeWritenQuestion();
 		$scope.changeEtaQ();		
-		console.log($scope.etatQ);
 		$scope.prepareQuestion()
-		
-
 	}
 
 	$scope.chooseAnswerMap = function(answer)
@@ -276,7 +239,6 @@ $scope.changeWritenQuestion = function(){
 		} else {
 			$scope.prepareQuestion()
 		}
-
 	}
 
 	$scope.changeEtaQ = function(){
@@ -291,9 +253,7 @@ $scope.changeWritenQuestion = function(){
    			 	$scope.etatQ = "Où";
    			 	$scope.page = "questionsMap";
    			 	$scope.map_pick = null;
-   			 				 	
    			 	$scope.displayMap=true;
-   			 	console.log($scope.page);
    			 	break;       		 
        		 	
        		 case "Où":
@@ -410,12 +370,21 @@ $scope.changeWritenQuestion = function(){
     $scope.addScore = function() {
     	if(!$scope.scoreAdded){
     		$scope.scoreAdded=true;
-	    	GApi.execute('quizzcelebrityendpoint','insertScoreEntity',{id: Math.floor(Math.random()*1000000)+1, google_id: $cookies.get("google_id"), name: $scope.user.name, score: $scope.resultat}).then(function(resp) {
-	    	  },function(e) {
-	     	   console.log('Error!');
-	     	   console.log(e);
+    		if(!$scope.user){
+    			$scope.google_id = null;
+    			$scope.username = "Anonymous";
+    		}else{
+    			$scope.google_id = $cookies.get("google_id");
+    			$scope.username = $scope.user.name;
+    		}
+    		
+	    	GApi.execute('quizzcelebrityendpoint','insertScoreEntity',{id: Math.floor(Math.random()*1000000)+1, google_id: $scope.google_id, name: $scope.username, score: $scope.resultat}).then(function(resp) {
+	    		$scope.openPageHighscores();  
+	    	},function(e) {
+	     	   console.log('Error during add score!');
+	     	   $scope.openPageHome();
 	    	  });
-	    	$scope.openPageHighscores();
+	    	
     	}
     	else{
     		console.log("Score déjà ajouté !!");
@@ -426,7 +395,7 @@ $scope.changeWritenQuestion = function(){
     GApi.execute('quizzcelebrityendpoint','listScoreEntity').then(function(resp) {
     	callback(resp.items);
     }, function() {
-      console.log('Error!');
+      console.log('Error during listing scores!');
     });
   };
 
@@ -439,118 +408,4 @@ $scope.changeWritenQuestion = function(){
   };
 
 }]) ;
-
-
-
-
-/*
-
-var questions = [
-  {
-    q: "Quel type d'attaque est super efficace contre les pokemons de type insecte ?",
-    answers: ['Feu','Eau', 'Glace'],
-  },
-  {
-    q: "Combien de badges y a-t-il dans la première génération de pokémon ?",
-    answers: ['8','12','3'],
-  },
-  {
-    q: "Quel est le pokémon numéro 144 ?",
-    answers: ['Artikodin','Minidraco','Pikachu'],
-  },
-];
-
-var validation = {
-  ok: "WOUAHOU té cro for!",
-  pas_ok: "Té nulachié...",
-};
-
-app.controller('AnswerController2', ['$scope1', 'GApi', function($scope, GApi){
-  
-  $scope.iterator = 0;
-  $scope.poolQuestions = questions;
-  $scope.poolValidate = validation;
-  $scope.valide = "";
-  $scope.notfinished = true;
-  $scope.page = null; 
-  $scope.current_score = 0; 
-  $scope.name = null;
-  
-  $scope.selection = function(numanswer) {
-    
-    if($scope.notfinished){
-      if(numanswer == 1)
-      {
-        $scope.valide = $scope.poolValidate.ok;
-        $scope.current_score++;
-      }
-      else
-        $scope.valide = $scope.poolValidate.pas_ok;
-      
-      if($scope.iterator < $scope.poolQuestions.length -1)
-        $scope.iterator++;
-      else
-      {
-        $scope.notfinished = false;
-        $scope.iterator = 0;
-        $scope.addScore();
-        $scope.openPage('endGame');
-        $scope.name = null;
-        $scope.valide = "";
-      }
-    }
-  };
-  
-  $scope.reset = function(){
-    $scope.current_score = 0;
-    $scope.notfinished = true;
-    $scope.page = 'play';
-  };
-  
-  $scope.addScore = function() {
-    GApi.execute('scoreentityendpoint','insertScoreEntity',{id: Math.floor(Math.random()*1000000)+1, name: $scope.name, score: $scope.current_score}).then(function(resp) {
-        console.log('Good!');
-      },function(e) {
-        console.log('Error!');
-        console.log(e);
-      });
-    }
-
-  $scope.openPage = function(page) {
-    $scope.page = page;
-
-    if (page == 'play') {
-      $scope.reset();
-    } else if (page == 'highscores') {
-      $scope.highscores = null;
-      $scope.listScores(function(data) {
-        $scope.highscores = data;
-      });
-    }
-  }
-  
-  $scope.listScores = function(callback) {
-    GApi.execute('scoreentityendpoint','listScoreEntity').then(function(resp) {
-      callback(resp.items);
-    }, function() {
-      console.log('Error!');
-    });
-  }
-
-
-// $scope.listScores = function() {
-//   GApi.execute('scoreentityendpoint','listScoreEntity').then(function(resp) {
-//     console.log('Affichage !');
-//   }, function() {
-//     console.log('Error!');
-//   });
-// }
-
-$scope.openPage('play');
-
-}]) ;*/
-
-
-
-
 
