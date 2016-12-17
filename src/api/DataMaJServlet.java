@@ -24,7 +24,7 @@ public class DataMaJServlet extends HttpServlet {
 		resp.getWriter().println("Maj effectuée ! :)");
 		
 		datastore = DatastoreServiceFactory.getDatastoreService();
-		//  TO DO : DELETE
+
 		majTheme("actor", datastore);
 		majTheme("musician", datastore);
 		majTheme("athlete", datastore);

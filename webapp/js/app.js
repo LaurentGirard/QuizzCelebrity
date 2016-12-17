@@ -58,7 +58,6 @@ app.run(['GApi', 'GAuth', '$rootScope', '$cookies', 'GData',
 
 
 app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData', function($scope, GApi, GAuth, $cookies, GData){
-
 	$scope.theme = "actor";
 	$scope.nbQuestion = 0 ;
 	$scope.etatQ = "Qui" ;
@@ -73,6 +72,45 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	$scope.mapLoaded=false;
 	$scope.scoreAdded=false;
 	
+    $scope.timer = {
+            percentage: 0,
+            rate: 1,
+            green: 0,
+            orange: 0,
+            red: 0,
+            id: null,
+            start: function() {
+                $scope.timer.id = setInterval(function() {
+                	if($scope.timer.green < 50)
+                		$scope.timer.green += $scope.timer.rate;
+                	else if ($scope.timer.orange < 25)
+                		$scope.timer.orange += $scope.timer.rate;
+                	else if($scope.timer.red < 25)
+                		$scope.timer.red += $scope.timer.rate;
+                	
+                	$scope.timer.percentage = $scope.timer.green + $scope.timer.orange + $scope.timer.red; 
+                    $scope.$apply();
+                    
+                    if ($scope.timer.percentage >= 100)
+                        $scope.timer.stop();
+                },200);
+            },
+            stop: function(out) {
+                if ($scope.timer.id != null) {
+                    clearInterval($scope.timer.id);
+                    $scope.timer.id = null;
+                    if (out)
+                        $scope.$apply();
+                }
+            },
+            init: function(){
+            	$scope.timer.green = 0;
+            	$scope.timer.orange = 0;
+            	$scope.timer.red = 0;
+            	$scope.timer.percentage = 0;
+            	id = null;
+            }
+    };
     // ------------------------------------------------------------------------------------------------------- // 
 
 
@@ -98,6 +136,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
         	
 	$scope.prepareQuestion = function()
 	{
+		$scope.timer.stop();
 		$scope.tabTrueFalse = [false , false, true, false];
 		$scope.tabTrueFalse = $scope.shuffle($scope.tabTrueFalse);
 
@@ -113,11 +152,12 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 
 		$scope.currentQuestionImage = $scope.tabPersonnes[$scope.nbQuestion].properties.Image;
 		$scope.page = "questions" ;
-		
+		$scope.timer.init();
+		$scope.timer.start();
 	}
 	
 	
-	$scope.estTrue =function(element, index, array) {
+	$scope.estTrue = function(element, index, array) {
  		return element;
  	}
 	
@@ -153,7 +193,7 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 					
 				}
        		 break;       		 
-       		 	
+
        		 case "Où":
        		  
        		  	$scope.tabReponses[indexTrue] = $scope.tabPersonnes[$scope.nbQuestion].properties.Country;
@@ -172,12 +212,11 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 	
 
 	$scope.changeWritenQuestion = function(){
-	
 		switch($scope.etatQ) {
 	    		
 				case "Qui":
 	    		
-	    			$scope.questionShowed = "En quelle année est née cette personne ?";
+	    			$scope.questionShowed = "Quelle est sa date de naissance ?";
 					
 	       		break;
 	       		
@@ -222,11 +261,11 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 		$scope.scoreAdded=false;
 		$scope.loadQuestions();	
 	}
-
+	
 	$scope.chooseAnswer = function( answer ) {
-
-		if ($scope.tabTrueFalse[answer] == true ){
-			$scope.resultat++;
+		$scope.timer.stop();
+		if ($scope.tabTrueFalse[answer] == true && $scope.timer.percentage < 100){
+			$scope.resultat = $scope.resultat + 100 - $scope.timer.percentage;
 		}
 		$scope.changeWritenQuestion();
 		$scope.changeEtaQ();		
@@ -235,12 +274,12 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 
 	$scope.chooseAnswerMap = function(answer)
 	{
-		if ($scope.tabReponses[$scope.indexTrue] == answer ){
-			$scope.resultat++;
+		if ($scope.tabReponses[$scope.indexTrue] == answer && $scope.timer.percentage < 100){
+			$scope.resultat = $scope.resultat + 100 - $scope.timer.percentage;
 		}
 		$scope.changeWritenQuestion();
 		$scope.changeEtaQ();
-		if ($scope.nbQuestion == 1){
+		if ($scope.nbQuestion == 3){
 			$scope.page = "finDuJeu";
 		} else {
 			$scope.prepareQuestion()
@@ -287,12 +326,11 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 		$scope.nbQuestion = 0;
 		$scope.etatQ ="Qui";
 		$scope.questionShowed = "Qui est cette personne ?";
-		$scope.page = "play";	
+		$scope.page = "play";
+		$scope.timer.stop();
 	}
 	
-
-
-	$scope.shuffle =function(array) {
+	$scope.shuffle = function(array) {
 	 	var currentIndex = array.length, temporaryValue, randomIndex;
 	
 	  	// While there remain elements to shuffle...
@@ -371,7 +409,6 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
                 placeMarker(map, infowindow, event.latLng);
             });
         };
-
 
     $scope.addScore = function() {
     	if(!$scope.scoreAdded){
