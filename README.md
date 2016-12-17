@@ -13,3 +13,6 @@ Pour lancer et utiliser le projet en local :
 
 	- se placer dans le dossier "webapp"
 	- faire la commande : php -S localhost:8000
+
+	
+TO DO : Faire un beau README.md et gérer la liste trop grande des highscores
