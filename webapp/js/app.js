@@ -274,9 +274,77 @@ app.controller('QuizzController', ['$scope', 'GApi', 'GAuth', '$cookies', 'GData
 
 	$scope.chooseAnswerMap = function(answer)
 	{
+		switch($scope.tabReponses[$scope.indexTrue]){
+		
+		case "the United States":
+			$scope.tabReponses[$scope.indexTrue] = "United States";
+			break;
+			
+		case "the Philippines":
+			$scope.tabReponses[$scope.indexTrue] = "Philippines";
+			break;
+			
+		case "Soviet Union":
+			$scope.tabReponses[$scope.indexTrue] = "Russia";
+			break;
+			
+		case "Czechoslovakia":
+			$scope.tabReponses[$scope.indexTrue] = "Czech Republic";
+			break;
+			
+		case "Hellenic Republic":
+			$scope.tabReponses[$scope.indexTrue] = "Greece";
+			break;
+			
+		case "Austria-Hungary":
+			$scope.tabReponses[$scope.indexTrue] = "Austria";
+			break;
+			
+		case "Yugoslavia":
+			$scope.tabReponses[$scope.indexTrue] = "Serbia";
+			break;	
+			
+		case "Latvian SSR":
+			$scope.tabReponses[$scope.indexTrue] = "Latvia";
+			break;
+			
+		case "Ukrainian SSR":
+			$scope.tabReponses[$scope.indexTrue] = "Ukraine";
+			break;
+			
+		case "Byelorussian SSR":
+			$scope.tabReponses[$scope.indexTrue] = "Belarus";
+			break;
+			
+		case "West Germany":
+			$scope.tabReponses[$scope.indexTrue] = "Germany";
+			break;
+		
+		case "East Germany":
+			$scope.tabReponses[$scope.indexTrue] = "Germany";
+			break;
+			
+		case "Burma":
+			$scope.tabReponses[$scope.indexTrue] = "Myanmar (Burma)";
+			break;
+			
+		case "Poltava":
+			$scope.tabReponses[$scope.indexTrue] = "Ukraine";
+			break;
+			
+		case "Victoria":
+			$scope.tabReponses[$scope.indexTrue] = "Australia";
+			break;
+			
+		case "Queensland":
+			$scope.tabReponses[$scope.indexTrue] = "Australia";
+			break;
+		}
+		
 		if ($scope.tabReponses[$scope.indexTrue] == answer && $scope.timer.percentage < 100){
 			$scope.resultat = $scope.resultat + 100 - $scope.timer.percentage;
 		}
+		
 		$scope.changeWritenQuestion();
 		$scope.changeEtaQ();
 		if ($scope.nbQuestion == 3){
