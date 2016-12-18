@@ -1,18 +1,9 @@
-# CelebrityQuizz
+# Le Quizz des "célébrités"
 
-Pour ajouter les librairies nécessaires depuis Eclipse : 
+Il s'agit d'un site posant des questions sur 3 personnes différentes choisies selon un thème.
 
-	clique droit -> properties -> Java Build Path -> ajouter les deux librairies : App Engine et JRE System Library jdk 1.7 (les télécharger si nécessaire)
-	
-	Ajouter en plus la librairie de Jena 2.10 disponible sur le site suivant :
-	https://archive.apache.org/dist/jena/binaries/
-	
-	C'est une solution temporaire, à voir avec maven plus tard.
+Seulement les 10 meilleurs scores seront repertoriés sur le site, il va falloir être bon pour avoir l'immense privilège de voir apparaître son nom sur cette liste !
 
-Pour lancer et utiliser le projet en local : 
+Lien : https://quizzcelebrity-149400.appspot.com/
 
-	- se placer dans le dossier "webapp"
-	- faire la commande : php -S localhost:8000
-
-	
-TO DO : Faire un beau README.md, le switch pour les pays chiants et gérer la liste trop grande des highscores
+Bon courage, c'est probablement le quizz le plus compliqué au monde puisque la notion de célébrité est assez abstraite ! ;)
