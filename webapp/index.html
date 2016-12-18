@@ -230,6 +230,7 @@
 	    		<div class="intro-header">
 			        <div class="container">
             	        <div class="row">
+            	        	<h1>Top 10 des meilleurs scores</h1>
 			          		<div class="col-md-6 col-md-offset-3">
 					            <table class="table">
 					              <thead>
@@ -241,10 +242,15 @@
 					              </thead>
 					              <tbody>
 					                <tr ng-repeat="score in highscores | orderBy : '-score'">
-					                  <td>{{($index+1)}}</td>
-					                  <td>{{score.name}}</td>
-					                  <td>{{score.score}}</td>
-					                </tr>
+						                  <td ng_show = "($index+1) <= 10">{{($index+1)}}</td>
+						                  <td ng_show = "($index+1) <= 10">{{score.name}}</td>
+						                  <td ng_show = "($index+1) <= 10">{{score.score}}</td>
+				                 	 </tr>
+				                 	 <tr ng-repeat="score in highscores | orderBy : '-score'">
+				                 	 	  <td ng-show = "($index+1) == 10">...</td>
+					                  	  <td ng-show = "($index+1) == 10">...</td>
+					                  	  <td ng-show = "($index+1) == 10">...</td>
+				                 	 </tr>
 					              </tbody>
 					            </table>
 					            <h4 ng-show="highscores == null">Waiting for data...</h4>
